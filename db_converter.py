@@ -162,6 +162,7 @@ def parse(input_filename, output_filename):
                     enum_name = "{0}_{1}".format(current_table, name)
 
                     if enum_name not in enum_types:
+                        output.write("DROP TYPE IF EXISTS {0}; \n".format(enum_name));
                         output.write("CREATE TYPE {0} AS ENUM ({1}); \n".format(enum_name, types_str));
                         enum_types.append(enum_name)
 
