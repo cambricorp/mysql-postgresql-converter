@@ -112,7 +112,7 @@ def parse(input_filename, output_filename):
                 
                 if "COMMENT" in extra:
                     extra, comment = extra.strip().split("COMMENT")
-                    comment_lines.append("COMMENT ON COLUMN \"%s\" IS '%s'" % (name, comment.strip(" ';")))
+                    comment_lines.append("COMMENT ON COLUMN %s.%s IS '%s'" % (current_table, name, comment.strip(" ';")))
 
                 # See if it needs type conversion
                 final_type = None
