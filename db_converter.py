@@ -32,6 +32,7 @@ def parse(input_filename, output_filename):
     drop_index_lines = []
     sequence_lines = []
     cast_lines = []
+    comment_lines = []
     num_inserts = 0
     started = time.time()
 
@@ -101,12 +102,18 @@ def parse(input_filename, output_filename):
                     # This must be a tricky enum
                     if ')' in extra:
                         type, extra = definition.strip().split(")")
+                    
+                    extra, comment = extra.strip().split("COMMENT")
 
                 except ValueError:
                     type = definition.strip()
                     extra = ""
+                    comment = ""
                 extra = re.sub("CHARACTER SET [\w\d]+\s*", "", extra.replace("unsigned", ""))
                 extra = re.sub("COLLATE [\w\d]+\s*", "", extra.replace("unsigned", ""))
+                
+                if comment:
+                    comment_lines.append("COMMENT ON COLUMN \"%s\" IS '%s';" % (name, comment.strip()))
 
                 # See if it needs type conversion
                 final_type = None
@@ -252,6 +259,11 @@ def parse(input_filename, output_filename):
     output.write("\n-- Indexes --\n")
     for line in index_lines:
         output.write("%s;\n" % line)
+    
+    # Write comments out
+    output.write("\n-- Comments --\n");
+    for line in comment_lines:
+        output.write("%s;\n", % line)
 
     # Finish file
     output.write("\n")
