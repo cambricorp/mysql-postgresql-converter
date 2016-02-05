@@ -127,6 +127,9 @@ def parse(input_filename, output_filename):
                 elif type.startswith("int("):
                     type = "integer"
                     set_sequence = True
+                elif type.startswith("mediumint("):
+                    type = "integer"
+                    set_sequence = True
                 elif type.startswith("bigint("):
                     type = "integer"
                     set_sequence = True
@@ -174,8 +177,8 @@ def parse(input_filename, output_filename):
                 if name == primary_name and set_sequence is True:
                     sequence_lines.append("DROP SEQUENCE IF EXISTS %s_id_seq" % (current_table))
                     sequence_lines.append("CREATE SEQUENCE %s_id_seq" % (current_table))
-                    sequence_lines.append("SELECT setval('%s_id_seq', max(id)) FROM %s" % (current_table, current_table))
-                    sequence_lines.append("ALTER TABLE \"%s\" ALTER COLUMN \"id\" SET DEFAULT nextval('%s_id_seq')" % (current_table, current_table))
+                    sequence_lines.append("SELECT setval('%s_id_seq', max(%s)) FROM %s" % (current_table, name, current_table))
+                    sequence_lines.append("ALTER TABLE \"%s\" ALTER COLUMN \"%s\" SET DEFAULT nextval('%s_id_seq')" % (current_table, name, current_table))
                 # Record it
                 creation_lines.append('"%s" %s %s' % (name, type, extra))
                 tables[current_table]['columns'].append((name, type, extra))
