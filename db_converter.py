@@ -263,7 +263,7 @@ def parse(input_filename, output_filename):
     # Write comments out
     output.write("\n-- Comments --\n");
     for line in comment_lines:
-        output.write("%s;\n", % line)
+        output.write("%s;\n" % line)
 
     # Finish file
     output.write("\n")
