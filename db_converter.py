@@ -96,24 +96,23 @@ def parse(input_filename, output_filename):
             # Is it a column?
             if line.startswith('"'):
                 useless, name, definition = line.strip(",").split('"',2)
+                comment = ""
                 try:
                     type, extra = definition.strip().split(" ", 1)
 
                     # This must be a tricky enum
                     if ')' in extra:
                         type, extra = definition.strip().split(")")
-                    
-                    extra, comment = extra.strip().split("COMMENT")
 
                 except ValueError:
                     type = definition.strip()
                     extra = ""
-                    comment = ""
                 extra = re.sub("CHARACTER SET [\w\d]+\s*", "", extra.replace("unsigned", ""))
                 extra = re.sub("COLLATE [\w\d]+\s*", "", extra.replace("unsigned", ""))
                 
-                if comment:
-                    comment_lines.append("COMMENT ON COLUMN \"%s\" IS '%s';" % (name, comment.strip()))
+                if "COMMENT" in extra:
+                    extra, comment = extra.strip().split("COMMENT")
+                    comment_lines.append("COMMENT ON COLUMN \"%s\" IS '%s'" % (name, comment.strip(" ';")))
 
                 # See if it needs type conversion
                 final_type = None
@@ -261,7 +260,7 @@ def parse(input_filename, output_filename):
         output.write("%s;\n" % line)
     
     # Write comments out
-    output.write("\n-- Comments --\n");
+    output.write("\n-- Comments --\n")
     for line in comment_lines:
         output.write("%s;\n" % line)
 
