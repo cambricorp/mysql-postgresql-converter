@@ -137,7 +137,7 @@ def parse(input_filename, output_filename):
                     type = "integer"
                     set_sequence = True
                 elif type.startswith("bigint("):
-                    type = "integer"
+                    type = "bigint"
                     set_sequence = True
                 elif type == "longtext":
                     type = "text"
