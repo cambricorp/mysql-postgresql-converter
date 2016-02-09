@@ -99,6 +99,7 @@ def parse(input_filename, output_filename):
             if line.startswith('"'):
                 useless, name, definition = line.strip(",").split('"',2)
                 comment = ""
+                check = ""
                 try:
                     type, extra = definition.strip().split(" ", 1)
 
@@ -111,7 +112,8 @@ def parse(input_filename, output_filename):
                     extra = ""
                 
                 if "unsigned" in extra:
-                    extra = extra.replace("unsigned", "CHECK (%s >= 0)" % (name))
+                    extra = extra.replace("unsigned", "")
+                    check = " CHECK(%s >= 0)" % (name)
                 
                 extra = re.sub("CHARACTER SET [\w\d]+\s*", "", extra)
                 extra = re.sub("COLLATE [\w\d]+\s*", "", extra)
@@ -128,6 +130,7 @@ def parse(input_filename, output_filename):
                     type = "int4"
                     set_sequence = True
                     final_type = "boolean"
+                    check = ""
 
                     if "DEFAULT '0'" in extra:
                         final_default = "FALSE"
@@ -193,7 +196,7 @@ def parse(input_filename, output_filename):
                     sequence_lines.append("SELECT setval('%s_id_seq', max(%s)) FROM %s" % (current_table, name, current_table))
                     sequence_lines.append("ALTER TABLE \"%s\" ALTER COLUMN \"%s\" SET DEFAULT nextval('%s_id_seq')" % (current_table, name, current_table))
                 # Record it
-                creation_lines.append('"%s" %s %s' % (name, type, extra))
+                creation_lines.append('"%s" %s %s%s' % (name, type, extra, check))
                 tables[current_table]['columns'].append((name, type, extra))
             # Is it a constraint or something?
             elif line.startswith("PRIMARY KEY"):
