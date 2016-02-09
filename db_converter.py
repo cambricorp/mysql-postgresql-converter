@@ -109,8 +109,12 @@ def parse(input_filename, output_filename):
                 except ValueError:
                     type = definition.strip()
                     extra = ""
-                extra = re.sub("CHARACTER SET [\w\d]+\s*", "", extra.replace("unsigned", ""))
-                extra = re.sub("COLLATE [\w\d]+\s*", "", extra.replace("unsigned", ""))
+                
+                if "unsigned" in extra:
+                    extra = extra.replace("unsigned", "CHECK (%s >= 0)" % (name))
+                
+                extra = re.sub("CHARACTER SET [\w\d]+\s*", "", extra)
+                extra = re.sub("COLLATE [\w\d]+\s*", "", extra)
                 
                 if "COMMENT" in extra:
                     extra, comment = extra.strip().split("COMMENT")
