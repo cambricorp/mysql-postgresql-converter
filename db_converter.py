@@ -85,6 +85,7 @@ def parse(input_filename, output_filename):
                 creation_lines = []
             # Inserting data into a table?
             elif line.startswith("INSERT INTO"):
+                output.write(re.sub(r"([^'])'0000-00-00'", r"\1NULL", line.encode("utf8")) + "\n")
                 output.write(re.sub(r"([^'])'0000-00-00 00:00:00'", r"\1NULL", line.encode("utf8")) + "\n")
                 num_inserts += 1
             # ???
