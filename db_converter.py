@@ -205,15 +205,15 @@ def parse(input_filename, output_filename):
                 foreign_key_lines.append("ALTER TABLE \"%s\" ADD CONSTRAINT %s DEFERRABLE INITIALLY DEFERRED" % (current_table, line.split("CONSTRAINT")[1].strip().rstrip(",")))
                 foreign_key_lines.append("CREATE INDEX ON \"%s\" %s" % (current_table, line.split("FOREIGN KEY")[1].split("REFERENCES")[0].strip().rstrip(",")))
             elif line.startswith("UNIQUE KEY \""):
-                index_name      = "%s_%s_unique" % (current_table, line.split('"')[1].split('"')[0])
+                index_name      = "%s_%s" % (current_table, line.split('"')[1].split('"')[0])
                 index_columns   = line.split("(")[1].split(")")[0]
                 index_lines.append("CREATE UNIQUE INDEX \"%s\" ON %s (%s)" % (index_name, current_table, index_columns))
                 drop_index_lines.append("DROP INDEX IF EXISTS \"%s\"" % index_name)
             elif line.startswith("UNIQUE KEY"):
-                index_columns   = '%s_%s_unique' % (current_table, line.split("(")[1].split(")")[0])
+                index_columns   = '%s_%s' % (current_table, line.split("(")[1].split(")")[0])
                 index_lines.append("CREATE UNIQUE INDEX ON %s (%s)" % (current_table, index_columns))
             elif line.startswith("KEY \""):
-                index_name      = '%s_%s_index' % (current_table, line.split('"')[1].split('"')[0])
+                index_name      = '%s_%s' % (current_table, line.split('"')[1].split('"')[0])
                 index_columns   = line.split("(")[1].split(")")[0]
                 index_lines.append("CREATE INDEX \"%s\" ON %s (%s)" % (index_name, current_table, index_columns))
                 drop_index_lines.append("DROP INDEX IF EXISTS \"%s\"" % index_name)
