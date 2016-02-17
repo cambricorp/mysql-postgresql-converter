@@ -154,9 +154,11 @@ def parse(input_filename, output_filename):
                     type = "text"
                 elif type == "tinytext":
                     type = "text"
+                    check = " CHECK(length(%s) <= %d)" % (name, 255)
                 elif type.startswith("varchar("):
                     size = int(type.split("(")[1].rstrip(")"))
-                    type = "varchar(%s)" % (size * 2)
+                    type = "text"
+                    check = " CHECK(length(%s) <= %d)" % (name, size)
                 elif type.startswith("smallint("):
                     type = "int2"
                     set_sequence = True
