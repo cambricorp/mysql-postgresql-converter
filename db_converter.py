@@ -155,6 +155,10 @@ def parse(input_filename, output_filename):
                 elif type == "tinytext":
                     type = "text"
                     check = " CHECK(length(%s) <= %d)" % (name, 255)
+                elif type.startswith("char("):
+                    size = int(type.split("(")[1].rstrip(")"))
+                    type = "text"
+                    check = " CHECK(length(%s) <= %d)" % (name, size)
                 elif type.startswith("varchar("):
                     size = int(type.split("(")[1].rstrip(")"))
                     type = "text"
