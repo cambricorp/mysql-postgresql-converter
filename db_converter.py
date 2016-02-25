@@ -37,15 +37,15 @@ def parse(input_filename, output_filename):
     started = time.time()
     # Incorrect primary_names that should be sequences
     primary_names = [
-        "addresse_id",
-        "categorie_id",
-        "fulfillment_batche_id",
-        "local_string_id",
-        "rma_id",
-        "sales_tax_id",
-        "term_id",
-        "vendor_freight_rate_id"
-        ]
+        ["addresses","addresse_id"],
+        ["categories", "category_id"],
+        ["fulfillment_batches","fulfillment_batch_id"],
+        ["local_strings","string_id"],
+        ["rma","rma_id"],
+        ["sales_tax", "tax_id"],
+        ["terms","terms_id"],
+        ["vendor_freight_rates","vendor_freight_id"]
+    ]
 
     # Open output file and write header. Logging file handle will be stdout
     # unless we're writing output to stdout, in which case NO PROGRESS FOR YOU.
@@ -207,7 +207,7 @@ def parse(input_filename, output_filename):
                         cast_lines.append("ALTER TABLE \"%s\" ALTER COLUMN \"%s\" SET DEFAULT %s" % (current_table, name, final_default))
                 # ID fields should be {singular_table_name}_id
                 primary_name = "%s_id" % (current_table.rstrip("s"))
-                if (name == primary_name or primary_name in primary_names) and set_sequence is True:
+                if (name == primary_name or (current_table, name) in primary_names) and set_sequence is True:
                     sequence_lines.append("DROP SEQUENCE IF EXISTS %s_id_seq" % (current_table))
                     sequence_lines.append("CREATE SEQUENCE %s_id_seq" % (current_table))
                     sequence_lines.append("SELECT setval('%s_id_seq', max(%s)) FROM %s" % (current_table, name, current_table))
