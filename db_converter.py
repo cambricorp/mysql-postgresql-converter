@@ -195,7 +195,7 @@ def parse(input_filename, output_filename):
                     if final_default:
                         cast_lines.append("ALTER TABLE \"%s\" ALTER COLUMN \"%s\" SET DEFAULT %s" % (current_table, name, final_default))
                 # ID fields should be {singular_table_name}_id
-                primary_name = "%s_id" % (current_table[:-1])
+                primary_name = "%s_id" % (current_table.rstrip("s"))
                 if name == primary_name and set_sequence is True:
                     sequence_lines.append("DROP SEQUENCE IF EXISTS %s_id_seq" % (current_table))
                     sequence_lines.append("CREATE SEQUENCE %s_id_seq" % (current_table))
