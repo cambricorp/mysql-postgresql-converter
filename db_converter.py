@@ -37,7 +37,7 @@ def parse(input_filename, output_filename):
     started = time.time()
     # Incorrect primary_names that should be sequences
     primary_names = [
-        ["addresses","addresse_id"],
+        ["addresses","address_id"],
         ["categories", "category_id"],
         ["fulfillment_batches","fulfillment_batch_id"],
         ["local_strings","string_id"],
@@ -134,20 +134,12 @@ def parse(input_filename, output_filename):
                     comment_lines.append("COMMENT ON COLUMN %s.%s IS '%s'" % (current_table, name, comment.strip(" ';")))
 
                 # See if it needs type conversion
-                final_type = None
-                final_default = None
                 set_sequence = None
                 if type == "tinyint(1)":
-                    type = "int4"
+                    type = "smallint"
                     set_sequence = True
-                    final_type = "boolean"
-                    check = ""
-
-                    if "DEFAULT '0'" in extra:
-                        final_default = "FALSE"
-                    elif "DEFAULT '1'" in extra:
-                        final_default = "TRUE"
-
+                    check = " CHECK(%s >= 0 AND %s <= 1)" % (name, name)
+                    comment_lines.append("COMMENT ON COLUMN %s.%s IS '%s'" % (current_table, name, "Boolean"))
                 elif type.startswith("tinyint("):
                     type = "integer"
                 elif type.startswith("int("):
@@ -200,11 +192,6 @@ def parse(input_filename, output_filename):
 
                     type = enum_name
 
-                if final_type:
-                    cast_lines.append("ALTER TABLE \"%s\" ALTER COLUMN \"%s\" DROP DEFAULT" % (current_table, name))
-                    cast_lines.append("ALTER TABLE \"%s\" ALTER COLUMN \"%s\" TYPE %s USING CAST(\"%s\" as %s)" % (current_table, name, final_type, name, final_type))
-                    if final_default:
-                        cast_lines.append("ALTER TABLE \"%s\" ALTER COLUMN \"%s\" SET DEFAULT %s" % (current_table, name, final_default))
                 # ID fields should be {singular_table_name}_id
                 primary_name = "%s_id" % (current_table.rstrip("s"))
                 if (name == primary_name or [current_table, name] in primary_names) and set_sequence is True:
