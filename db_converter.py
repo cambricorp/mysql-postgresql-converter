@@ -152,19 +152,19 @@ def parse(input_filename, output_filename):
                     type = "bigint"
                     set_sequence = True
                 elif type == "longtext":
-                    type = "text"
+                    type = "citext"
                 elif type == "mediumtext":
-                    type = "text"
+                    type = "citext"
                 elif type == "tinytext":
-                    type = "text"
+                    type = "citext"
                     check = " CHECK(length(%s) <= %d)" % (name, 255)
                 elif type.startswith("char("):
                     size = int(type.split("(")[1].rstrip(")"))
-                    type = "text"
+                    type = "citext"
                     check = " CHECK(length(%s) <= %d)" % (name, size)
                 elif type.startswith("varchar("):
                     size = int(type.split("(")[1].rstrip(")"))
-                    type = "text"
+                    type = "citext"
                     check = " CHECK(length(%s) <= %d)" % (name, size)
                 elif type.startswith("smallint("):
                     type = "int2"
