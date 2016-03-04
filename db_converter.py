@@ -64,7 +64,7 @@ def parse(input_filename, output_filename):
 
     output.write("-- Converted by db_converter\n")
     # Enable case-insensitive columns
-    output.write("CREATE EXTENSION citext;\n")
+    output.write("CREATE EXTENSION IF NOT EXISTS citext;\n")
 
     output.write("START TRANSACTION;\n")
     output.write("SET standard_conforming_strings=off;\n")
